@@ -103,7 +103,7 @@ def post_publish(request, pk):
     return redirect('post_detail', pk=pk)
 
 
-
+#push için deneme
 
 
 
