@@ -7,10 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin   #for class based vie
 from django.contrib.auth.decorators import login_required   #for function based views
 from django.urls import reverse_lazy
 
-
-
 # Create your views here.
-
 
 class AboutView(TemplateView):
     template_name = 'about.html'
@@ -21,10 +18,17 @@ class PostListView(ListView):
 
     def get_queryset(self):
         return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-
+#Used by ListViews - it determines the list of objects that you want to display.
+#By default, it will just give you all for the model you specify.
+#By overriding this method you can extend or completely replace this logic
 
 class PostDetailView(DetailView):
     model = Post
+    context_object_name = 'post_dt' #Normalde bu attribute tanıml değildi ve post_detail.html'de
+                                    # post_dt yerine post kullanılıyordu.
+
+#'context_object_name' :This helps anyone else reading the code to understand what is variable in the template context, plus it is much easier to read and understand.
+
 
 
 class CreatePostView(LoginRequiredMixin, CreateView):
@@ -61,19 +65,21 @@ class DraftListView(LoginRequiredMixin, ListView):
 
 @login_required
 def add_comment_to_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    postal = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST)  #dolu form gönderiyor
         if form.is_valid():
-            asd = form.save(commit=False)
-            asd.post = post #post var in Commentmodel which is s foreign key in Post model
-            asd.save()
-            return redirect('post_detail', pk=post.pk)
+            post_atr = form.save(commit=False)  #egitimde, comment = form.save(commit=False)
+            post_atr.post = postal #post var in Commentmodel which is a foreign key in Post model
+            post_atr.save()
+            return redirect('post_detail', pk=postal.pk)
+#post_atr.post = postal. This connects the Comment model's post attribute to the current post that the user is on (so the connection between the comment and the post can happen)
+# Comment'in post attribute'ünü (Foreign Key ile Post model'a baglıdır) formla gelen Post model object(burada postal)'e eşitliyor.
 
     else:
-        form = CommentForm()
-        return render(request, 'blog/comment_form.html', {'form': form})
-
+        form = CommentForm()  #bos form gönderiyor
+        return render(request, 'blog/comment_form.html', {'form_me': form})
+#{'form': form}'daki value olan form, yukarıdaki form instance'dan geliyor.
 
 @login_required()
 def comment_approve(request, pk):

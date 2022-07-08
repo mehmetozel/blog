@@ -120,6 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = Path(BASE_DIR)/'static'
+STATIC_ROOT = Path(BASE_DIR)/'static'  #url olarak path
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'  #Bunu tanımlamasaydık login yaptıktan sonra Default olarak buraya yönlendirecekti: '/accounts/profile/'
+                          #The URL or named URL pattern where requests are redirected after login when the LoginView doesn’t get a next GET parameter.

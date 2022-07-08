@@ -3,11 +3,11 @@ from django.utils import timezone
 from django.urls import reverse
 
 class Post(models.Model):
-    author = models.ForeignKey('auth.User',on_delete=models.CASCADE)
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
     text = models.TextField()
     create_date = models.DateTimeField(default=timezone.now())
-    published_date = models.DateTimeField(blank=True, null=True)
+    published_date = models.DateTimeField(blank=True, null=True) #str olan fieldlar null olarak db'e kaydedilmemeli
 
     def publish(self):
         self.published_date = timezone.now()
@@ -28,7 +28,7 @@ class Comment(models.Model):
     author = models.CharField(max_length=200)
     text = models.TextField()
     create_date = models.DateTimeField(default=timezone.now())
-    approved_comment = models.BooleanField(default=False)
+    approved_comment = models.BooleanField(default=False) #db'de 1 veya 0 olarak görünür, onaylanıp onaylanmadıgına göre.
 
     def approve(self):
         self.approved_comment = True
